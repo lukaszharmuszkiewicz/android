@@ -1,0 +1,86 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.aplikacja.MainActivity">
+
+    <item
+        android:id="@+id/add_image"
+        android:orderInCategory="100"
+        android:title="@string/add_image"
+        app:showAsAction="never" />
+
+
+    <item
+    android:id="@+id/sepia"
+    android:orderInCategory="100"
+    android:title="@string/sepia"
+    app:showAsAction="never" />
+
+    <item
+        android:id="@+id/blackandwhite"
+        android:orderInCategory="100"
+        android:title="@string/blackandwhite"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/delete"
+        android:orderInCategory="100"
+        android:title="@string/delete"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/border"
+        android:orderInCategory="100"
+        android:title="@string/border"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/gauss"
+        android:orderInCategory="100"
+        android:title="@string/gauss"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/rozja"
+        android:orderInCategory="100"
+        android:title="@string/rozjasnianie"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/engrave"
+        android:orderInCategory="100"
+        android:title="@string/engrave"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/snow"
+        android:orderInCategory="100"
+        android:title="@string/snow"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/saturation"
+        android:orderInCategory="100"
+        android:title="@string/saturation"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/rogi"
+        android:orderInCategory="100"
+        android:title="@string/rogi"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/prawo"
+        android:orderInCategory="100"
+        android:title="@string/prawo"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/lewo"
+        android:orderInCategory="100"
+        android:title="@string/lewo"
+        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/save"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/save"-->
+<!--        app:showAsAction="never" />-->
+
+</menu>

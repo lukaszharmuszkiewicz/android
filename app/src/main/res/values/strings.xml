@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Aplikacja</string>
+    <string name="action_settings">Settings</string>
+    <string name="add_image">Dodaj zdjęcie</string>
+    <string name="sepia">Sepia</string>
+    <string name="blackandwhite">Czarno-białe</string>
+    <string name="delete">Usuń</string>
+    <string name="border">Ramka</string>
+    <string name="gauss">Rozmycie Gaussowskie</string>
+    <string name="rozjasnianie">Rozjaśnienie</string>
+    <string name="engrave">Grawer</string>
+    <string name="snow">Snieg</string>
+    <string name="saturation">Nasycenie</string>
+    <string name="idk">idk</string>
+    <string name="rogi">Zaokrąglone rogi</string>
+    <string name="prawo">W prawo</string>
+    <string name="lewo">W lewo</string>
+    <string name="save">Zapisz</string>
+
+</resources>
