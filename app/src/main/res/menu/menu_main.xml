@@ -11,15 +11,15 @@
 
 
     <item
-    android:id="@+id/sepia"
+    android:id="@+id/filtry"
     android:orderInCategory="100"
-    android:title="@string/sepia"
+    android:title="@string/filtry"
     app:showAsAction="never" />
 
     <item
-        android:id="@+id/blackandwhite"
+        android:id="@+id/obrót"
         android:orderInCategory="100"
-        android:title="@string/blackandwhite"
+        android:title="@string/obróć"
         app:showAsAction="never" />
 
 
@@ -30,57 +30,57 @@
         app:showAsAction="never" />
 
 
-    <item
-        android:id="@+id/border"
-        android:orderInCategory="100"
-        android:title="@string/border"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/gauss"
-        android:orderInCategory="100"
-        android:title="@string/gauss"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/rozja"
-        android:orderInCategory="100"
-        android:title="@string/rozjasnianie"
-        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/engrave"
-        android:orderInCategory="100"
-        android:title="@string/engrave"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/snow"
-        android:orderInCategory="100"
-        android:title="@string/snow"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/saturation"
-        android:orderInCategory="100"
-        android:title="@string/saturation"
-        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/rogi"
-        android:orderInCategory="100"
-        android:title="@string/rogi"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/prawo"
-        android:orderInCategory="100"
-        android:title="@string/prawo"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/lewo"
-        android:orderInCategory="100"
-        android:title="@string/lewo"
-        app:showAsAction="never" />
 <!--    <item-->
-<!--        android:id="@+id/save"-->
+<!--        android:id="@+id/rozja"-->
 <!--        android:orderInCategory="100"-->
-<!--        android:title="@string/save"-->
+<!--        android:title="@string/rozjasnianie"-->
 <!--        app:showAsAction="never" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/engrave"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/engrave"-->
+<!--        app:showAsAction="never" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/saturation"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/saturation"-->
+<!--        app:showAsAction="never" />-->
+
+
+    <item
+        android:id="@+id/dodajElementy"
+        android:orderInCategory="100"
+        android:title="@string/dodajElementy"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/save"
+        android:orderInCategory="100"
+        android:title="@string/save"
+        app:showAsAction="never" />
+
+
+<!--    <item-->
+<!--        android:id="@+id/zrobZdjecie"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="zdjecie"-->
+<!--        app:showAsAction="never" />-->
+
+
+    <item
+        android:id="@+id/instagram"
+        android:orderInCategory="100"
+        android:title="Instagram"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/facebook"
+        android:orderInCategory="100"
+        android:title="Facebook"
+        app:showAsAction="never" />
 
 </menu>

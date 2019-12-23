@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Aplikacja</string>
+    <string name="app_name">Edytor zdjęć</string>
     <string name="action_settings">Settings</string>
     <string name="add_image">Dodaj zdjęcie</string>
     <string name="sepia">Sepia</string>
@@ -16,5 +16,7 @@
     <string name="prawo">W prawo</string>
     <string name="lewo">W lewo</string>
     <string name="save">Zapisz</string>
-
+    <string name="filtry">Filtry</string>
+    <string name="obróć">Obróć zdjęcie</string>
+    <string name="dodajElementy">Dodaj elementy</string>
 </resources>
