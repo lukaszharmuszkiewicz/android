@@ -82,5 +82,10 @@
         android:orderInCategory="100"
         android:title="Facebook"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/text"
+        android:orderInCategory="100"
+        android:title="Memy"
+        app:showAsAction="never" />
 
 </menu>

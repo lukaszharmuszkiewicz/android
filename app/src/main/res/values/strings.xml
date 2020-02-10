@@ -19,4 +19,6 @@
     <string name="filtry">Filtry</string>
     <string name="obróć">Obróć zdjęcie</string>
     <string name="dodajElementy">Dodaj elementy</string>
+    <string name="facebook_app_id">994938707544168</string>
+    <string name="facebook_login_protocol_scheme">fb994938707544168</string>
 </resources>

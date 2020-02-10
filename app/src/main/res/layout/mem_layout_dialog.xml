@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/upup"
+        android:layout_width="368dp"
+        android:layout_height="74dp"
+        android:maxLength="16"
+
+        android:hint="Górny tekst" />
+
+    <EditText
+        android:id="@+id/updown"
+        android:layout_width="368dp"
+        android:layout_height="74dp"
+        android:layout_below="@+id/upup"
+        android:layout_alignStart="@+id/upup"
+        android:layout_alignLeft="@+id/upup"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:maxLength="16"
+        android:hint="Górny tekst" />
+
+    <EditText
+    android:id="@+id/downup"
+    android:layout_width="368dp"
+    android:layout_height="74dp"
+    android:layout_below="@+id/updown"
+    android:layout_alignStart="@+id/updown"
+    android:layout_alignLeft="@+id/updown"
+    android:layout_marginStart="0dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginTop="200dp"
+    android:maxLength="16"
+    android:hint="Dolny tekst" />
+
+
+    <EditText
+        android:id="@+id/downdown"
+        android:layout_width="368dp"
+        android:layout_height="74dp"
+        android:layout_below="@+id/downup"
+        android:layout_alignStart="@+id/downup"
+        android:layout_alignLeft="@+id/downup"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:maxLength="16"
+        android:hint="Dolny tekst" />
+
+
+
+
+
+</RelativeLayout>

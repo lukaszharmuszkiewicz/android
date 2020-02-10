@@ -2,9 +2,12 @@ package com.example.aplikacja;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,10 +16,20 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -29,6 +42,8 @@ import androidx.core.content.ContextCompat;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +55,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Random;
 import java.util.zip.CheckedOutputStream;
 
 public class MainActivity extends AppCompatActivity implements ExampleDialog.ExampleDialogListener, RamkaDialog.RamkaDialogListener
-        , ErozjaDialog.ErozjaDialogListener, RogiDialog.RogiDialogListener {
+        , ErozjaDialog.ErozjaDialogListener, RogiDialog.RogiDialogListener, MemDialog.ExampleDialogListener {
 
 
     ImageView imageView;
@@ -58,17 +74,25 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
     MenuItem erozja;
     MenuItem applyRoundCornerEffect;
     ImageFilters imageFilters;
+    ShareDialog shareDialog;
+    CallbackManager callbackManager;
     private EditText level;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
         imageView = findViewById(R.id.imageView);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         imageFilters = new ImageFilters();
         addImage = (MenuItem) findViewById(R.id.add_image);
-
+        shareDialog = new ShareDialog(this);
+    printHeyHash();
         //int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
 
@@ -77,6 +101,19 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
 
 
+    }
+
+    private void printHeyHash() {
+        try{
+            PackageInfo info = getPackageManager().getPackageInfo("com.example.aplikacja", PackageManager.GET_SIGNATURES);
+            for(Signature signature : info.signatures){
+                MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+                messageDigest.update(signature.toByteArray());
+                Log.d("KeyHash", Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -282,75 +319,104 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         }
 
 
-        if( id == R.id.facebook){
-            byte[] data = null;
-
-            Bitmap bi = BitmapFactory.decodeFile("/sdcard/viewitems.png");
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            data = baos.toByteArray();
-
-
-            Bundle params = new Bundle();
-            params.putString(Facebook.TOKEN, facebook.getAccessToken());
-            params.putString("method", "photos.upload");
-            params.putByteArray("picture", data);
-
-            AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
-            mAsyncRunner.request(null, params, "POST", new SampleUploadListener(), null);
-
-        }
+//        if( id == R.id.facebook){
+//            byte[] data = null;
+//
+//            Bitmap bi = BitmapFactory.decodeFile("/sdcard/viewitems.png");
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            data = baos.toByteArray();
+//
+//
+//            Bundle params = new Bundle();
+//            params.putString(Facebook.TOKEN, facebook.getAccessToken());
+//            params.putString("method", "photos.upload");
+//            params.putByteArray("picture", data);
+//
+//            AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
+//            mAsyncRunner.request(null, params, "POST", new SampleUploadListener(), null);
+//
+//        }
 
         if( id == R.id.instagram){
 
 
 
+if(!(imageView.getDrawable()==null)) {
+
+
+    Intent intent = getPackageManager().getLaunchIntentForPackage("com.instagram.android");
+    Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+    File path = Environment.getExternalStorageDirectory();
+    File dir = new File(path + "/DCIM");
+    dir.mkdirs();
+    String name = (new Date()).toString() + ".png";
+    File file = new File(dir, name);
+
+
+    OutputStream out;
+
+    try {
+        out = new FileOutputStream(file);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        out.flush();
+        out.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    if (intent != null) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setPackage("com.instagram.android");
+        try {
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), path + "/DCIM/" + name, name, "Share happy !")));
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        shareIntent.setType("image/jpeg");
+
+        startActivity(shareIntent);
+    } else {
+        // bring user to the market to download the app.
+        // or let them choose an app?
+        intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("market://details?id=" + "com.instagram.android"));
+        startActivity(intent);
+    }
+}  else {
+    View parentLayout = findViewById(android.R.id.content);
+    Snackbar snackbar = Snackbar
+            .make(parentLayout, "W pierwszej kolejności dodaj zdjęcie", Snackbar.LENGTH_LONG);
+    snackbar.show();
+}
+        }
 
 
 
+        if(id == R.id.facebook){
 
-            Intent intent = getPackageManager().getLaunchIntentForPackage("com.instagram.android");
-            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-            File path = Environment.getExternalStorageDirectory();
-            File dir = new File(path + "/DCIM");
-            dir.mkdirs();
-            String name = (new Date()).toString() + ".png";
-            File file = new File(dir,name);
+            if(!(imageView.getDrawable()==null)){
 
 
-            OutputStream out;
 
-            try{
-                out = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
-                out.flush();
-                out.close();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-            if (intent != null)
-            {
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.setPackage("com.instagram.android");
-                try {
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), path + "/DCIM/" + name, name, "Share happy !")));
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                shareIntent.setType("image/jpeg");
+           SharePhoto sharePhoto = new SharePhoto.Builder()
+                   .setBitmap(((BitmapDrawable) imageView.getDrawable()).getBitmap())
+                   .build();
 
-                startActivity(shareIntent);
-            }
-            else
-            {
-                // bring user to the market to download the app.
-                // or let them choose an app?
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setData(Uri.parse("market://details?id="+"com.instagram.android"));
-                startActivity(intent);
+           SharePhotoContent photoContent = new SharePhotoContent.Builder()
+                   .addPhoto(sharePhoto)
+                   .build();
+           if(shareDialog.canShow(SharePhotoContent.class)){
+               shareDialog.show(photoContent);
+           }
+
+        }  else {
+                View parentLayout = findViewById(android.R.id.content);
+                Snackbar snackbar = Snackbar
+                        .make(parentLayout, "W pierwszej kolejności dodaj zdjęcie", Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         }
 
@@ -390,28 +456,50 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         }
 
         if (id == R.id.save) {
-
-            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-            File path = Environment.getExternalStorageDirectory();
-            File dir = new File(path + "/DCIM");
-            dir.mkdirs();
-            String name = (new Date()).toString() + ".png";
-            File file = new File(dir,name);
+            if (!(imageView.getDrawable() == null)) {
 
 
-            OutputStream out;
+                Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                File path = Environment.getExternalStorageDirectory();
+                File dir = new File(path + "/DCIM");
+                dir.mkdirs();
+                String name = (new Date()).toString() + ".png";
+                File file = new File(dir, name);
 
-            try{
-                out = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
-                out.flush();
-                out.close();
-            } catch (Exception e){
-                e.printStackTrace();
+
+                OutputStream out;
+
+                try {
+                    out = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
-            return true;
+            else {
+                View parentLayout = findViewById(android.R.id.content);
+                Snackbar snackbar = Snackbar
+                        .make(parentLayout, "W pierwszej kolejności dodaj zdjęcie", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+
         }
 
+
+        if(id == R.id.text){
+            if(!(imageView.getDrawable()==null)){
+                openMemDialog();
+            }  else {
+                View parentLayout = findViewById(android.R.id.content);
+                Snackbar snackbar = Snackbar
+                        .make(parentLayout, "W pierwszej kolejności dodaj zdjęcie", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+
+        }
 //        if(id == R.id.zrobZdjecie) {
 //            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //            startActivityForResult(intent,CAMERA_REQUEST);
@@ -469,6 +557,11 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         exampleDialog.show(getSupportFragmentManager(), "example dialog");
     }
 
+
+    public void openMemDialog(){
+        MemDialog memDialog = new MemDialog();
+        memDialog.show(getSupportFragmentManager(), "example dialog");
+    }
     @Override
     public void applyTexts(String level) {
         System.out.println(level);
@@ -496,6 +589,13 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
     }
 
+    public void addText(String s1, String s2, String s3, String s4){
+        writeTextOnDrawableUpUp(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s1);
+        writeTextOnDrawableUpDown(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s2);
+        writeTextOnDrawableDownUp(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s3);
+        writeTextOnDrawableDownDown(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s4);
+    }
+
     private void SaveImage(Bitmap finalBitmap) {
 
         String root = Environment.getExternalStorageDirectory().toString();
@@ -516,5 +616,187 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void writeTextOnDrawableDownUp(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight()/6) - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+
+
+    private void writeTextOnDrawableUpUp(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()/7) - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+    private void writeTextOnDrawableUpDown(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()/7) + convertToPixels(imageView.getContext(), 35) + 10 - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+
+
+    private void writeTextOnDrawableDownDown(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight()/6) - convertToPixels(imageView.getContext(), 35) - 10 - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+
+    public static int convertToPixels(Context context, int nDP)
+    {
+        final float conversionScale = context.getResources().getDisplayMetrics().density;
+
+        return (int) ((nDP * conversionScale) + 0.5f) ;
+
     }
 }
