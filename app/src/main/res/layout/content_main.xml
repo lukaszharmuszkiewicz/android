@@ -6,15 +6,61 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:orientation="horizontal">
+
+
+<RelativeLayout
+    android:id="@+id/asd"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="568dp"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="-3dp" />
+
+    <SeekBar
+        android:id="@+id/seekBar1"
+
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/imageView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="-50dp"
+        android:layout_marginBottom="52dp"
+        android:max="300"
+        android:min="1"
+        android:visibility="invisible" />
+
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </RelativeLayout>

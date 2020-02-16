@@ -2,6 +2,7 @@ package com.example.aplikacja;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +20,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.net.Uri;
+import com.squareup.picasso.Picasso;
 import android.os.Bundle;
 
 import com.facebook.CallbackManager;
@@ -32,6 +35,7 @@ import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,17 +47,20 @@ import androidx.core.content.ContextCompat;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Date;
@@ -74,9 +81,15 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
     MenuItem erozja;
     MenuItem applyRoundCornerEffect;
     ImageFilters imageFilters;
+    Uri imageUri;
     ShareDialog shareDialog;
     CallbackManager callbackManager;
     private EditText level;
+    SeekBar seekBar;
+    String s1, s2, s3, s4;
+    Bitmap bitmap;
+    Bitmap prev;
+    Bitmap curr;
 
 
 
@@ -92,7 +105,32 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         imageFilters = new ImageFilters();
         addImage = (MenuItem) findViewById(R.id.add_image);
         shareDialog = new ShareDialog(this);
+        seekBar = findViewById(R.id.seekBar1);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                seekBar.setVisibility(View.GONE);
+            }
+        });
+
     printHeyHash();
+    seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            editText(progress);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    });
         //int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
 
@@ -186,28 +224,37 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                                 imageView.setImageBitmap(imageFilters.toSephia(((BitmapDrawable) imageView.getDrawable()).getBitmap()));
                                 break;
                             case 1:
-                                ColorMatrix matrix = new ColorMatrix();
-                                matrix.setSaturation(0);
 
-                                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                                imageView.setColorFilter(filter);
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                                imageView.setImageBitmap(imageFilters.toGrayscale(((BitmapDrawable)imageView.getDrawable()).getBitmap()));
+//                                ColorMatrix matrix = new ColorMatrix();
+//                                matrix.setSaturation(0);
+//
+//                                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+//                                imageView.setColorFilter(filter);
                                 break;
                             case 2:
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                                 imageView.setImageBitmap(imageFilters.applyGaussianBlurEffect(((BitmapDrawable) imageView.getDrawable()).getBitmap()));
                                 break;
                             case 3:
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                                 imageView.setImageBitmap(imageFilters.applySnowEffect(((BitmapDrawable) imageView.getDrawable()).getBitmap()));
                                 break;
                             case 4:
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                                 openDialog();
                                 break;
                             case 5:
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                                 openErozjaDialog();
                                 break;
                             case 6:
+                                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                                 imageView.setImageBitmap(imageFilters.applyEngraveEffect(((BitmapDrawable) imageView.getDrawable()).getBitmap()));
                                 break;
 
@@ -243,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         if (id == R.id.obrót) {
             if(!(imageView.getDrawable()==null)) {
 
-
+                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Wybierz obrót");
                 String[] animals = {"90 stopni w prawo", "90 stopni w lewo"};
@@ -286,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         if(id == R.id.dodajElementy) {
             if(!(imageView.getDrawable() == null)) {
 
-
+                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Wybierz element");
                 String[] animals = {"Śnieg", "Ramka", "Zaokrąglone rogi"};
@@ -391,6 +438,7 @@ if(!(imageView.getDrawable()==null)) {
             .make(parentLayout, "W pierwszej kolejności dodaj zdjęcie", Snackbar.LENGTH_LONG);
     snackbar.show();
 }
+return true;
         }
 
 
@@ -418,6 +466,13 @@ if(!(imageView.getDrawable()==null)) {
                         .make(parentLayout, "W pierwszej kolejności dodaj zdjęcie", Snackbar.LENGTH_LONG);
                 snackbar.show();
             }
+            return true;
+        }
+
+
+        if(id == R.id.undo){
+            undo();
+            return true;
         }
 
         if (id == R.id.add_image) {
@@ -436,8 +491,22 @@ if(!(imageView.getDrawable()==null)) {
                             startActivityForResult(Intent.createChooser(intent,"Select"), GALLERY_REQUEST);
                             break;
                         case 1:
+
+
+
+                            ContentValues values = new ContentValues();
+                            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+                            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+
+                             imageUri = getContentResolver().insert(
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                             Intent intent1 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent1,CAMERA_REQUEST);
+                            intent1.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                            startActivityForResult(intent1, CAMERA_REQUEST);
+
+
+                            //Intent intent11 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            //startActivityForResult(intent1,CAMERA_REQUEST);
                             break;
 
                     }
@@ -460,10 +529,12 @@ if(!(imageView.getDrawable()==null)) {
 
 
                 Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-                File path = Environment.getExternalStorageDirectory();
-                File dir = new File(path + "/DCIM");
+                //File path = Environment.getExternalStorageDirectory();
+                File dir = new File(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/Camera/");
+                if(!dir.exists())
                 dir.mkdirs();
-                String name = (new Date()).toString() + ".png";
+                String name = (new Date()).toString() + ".jpg";
                 File file = new File(dir, name);
 
 
@@ -471,7 +542,7 @@ if(!(imageView.getDrawable()==null)) {
 
                 try {
                     out = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.flush();
                     out.close();
                 } catch (Exception e) {
@@ -491,6 +562,8 @@ if(!(imageView.getDrawable()==null)) {
 
         if(id == R.id.text){
             if(!(imageView.getDrawable()==null)){
+                prev = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
                 openMemDialog();
             }  else {
                 View parentLayout = findViewById(android.R.id.content);
@@ -519,16 +592,25 @@ if(!(imageView.getDrawable()==null)) {
         if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
             Uri uri = data.getData();
             try{
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                imageView.setImageBitmap(bitmap);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
+                byte[] bytes = outputStream.toByteArray();
+                Bitmap bitmap1 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                imageView.setImageBitmap(bitmap1);
+                Log.d("width" + bitmap.getWidth() , "heigth" + bitmap.getHeight() + " ");
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
         if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             try {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                imageView.setImageBitmap(bitmap);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStream);
+                byte[] bytes = byteArrayOutputStream.toByteArray();
+                Bitmap bitmap1 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                imageView.setImageBitmap(bitmap1);
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -594,6 +676,25 @@ if(!(imageView.getDrawable()==null)) {
         writeTextOnDrawableUpDown(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s2);
         writeTextOnDrawableDownUp(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s3);
         writeTextOnDrawableDownDown(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s4);
+        this.s1 = s1;
+        this.s2 = s2;
+        this.s3 = s3;
+        this.s4 = s4;
+        seekBar.setVisibility(View.VISIBLE);
+        Bitmap workingBitmap = Bitmap.createBitmap(((BitmapDrawable)imageView.getDrawable()).getBitmap());
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        seekBar.setProgress(convertToPixels(mutableBitmap));
+        seekBar.setMax(convertToPixels(mutableBitmap) + 100);
+
+    }
+
+
+    public void editText(int progress){
+        imageView.setImageBitmap(bitmap);
+        editTextOnDrawableUpUp(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s1, progress);
+        editTextOnDrawableUpDown(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s2, progress);
+        editTextOnDrawableDownUp(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s3, progress);
+        editTextOnDrawableDownDown(((BitmapDrawable)imageView.getDrawable()).getBitmap(), s4, progress);
     }
 
     private void SaveImage(Bitmap finalBitmap) {
@@ -632,7 +733,295 @@ if(!(imageView.getDrawable()==null)) {
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+        Canvas canvas = new Canvas(mutableBitmap);
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+        int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight()/6) - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+    }
+
+
+    private void writeTextOnDrawableUpUp(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
+        paint.setTextSize(convertToPixels(mutableBitmap));
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+        int yPos = (int) ((canvas.getHeight()/7) - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+    }
+    private void writeTextOnDrawableUpDown(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
+        paint.setTextSize(convertToPixels(mutableBitmap));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()/7) + getResources().getDimensionPixelSize(R.dimen.myFontSize) + 10 - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+
+
+    private void writeTextOnDrawableDownDown(Bitmap bm, String text) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight()/6) - convertToPixels(mutableBitmap) - 10 - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+
+    public static int convertToPixels(Bitmap bitmap)
+    {
+            int width = bitmap.getWidth();
+            int heigth = bitmap.getHeight();
+
+            int size = width * heigth / 5000;
+            return size;
+
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        Matrix m = new Matrix();
+
+        float sx = width / (float) image.getWidth();
+        float sy = height / (float) image.getHeight();
+        m.setScale(sx, sy);
+        if(width > image.getWidth() || height > image.getHeight())
+            return image;
+
+        return Bitmap.createBitmap(image, 0, 0, width, height, m,true);
+    }
+
+
+/////////////////////////////////////////////////////////
+
+
+    private void editTextOnDrawableUpUp(Bitmap bm, String text, int size) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
+        paint.setTextSize(size);
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()/7) - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+    private void editTextOnDrawableUpDown(Bitmap bm, String text, int size) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
+        paint.setTextSize(size);
+
+
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+
+        //If the text is bigger than the canvas , reduce the font size
+        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+
+        //Calculate the positionsf
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+
+        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int yPos = (int) ((canvas.getHeight()/7) + size + 10 - ((paint.descent() + paint.ascent()) / 2)) ;
+
+        canvas.drawText(text, xPos, yPos, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(text, xPos, yPos, paint);
+
+        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
+        imageView.setImageBitmap(bitmap.getBitmap());
+
+        //return new BitmapDrawable(getResources(), mutableBitmap);
+    }
+
+
+
+
+
+    private void editTextOnDrawableDownUp(Bitmap bm, String text, int size) {
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bm);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+
+        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTypeface(tf);
+        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        paint.setTextSize(size);
 
 
         Rect textRect = new Rect();
@@ -663,7 +1052,8 @@ if(!(imageView.getDrawable()==null)) {
     }
 
 
-    private void writeTextOnDrawableUpUp(Bitmap bm, String text) {
+
+    private void editTextOnDrawableDownDown(Bitmap bm, String text, int size) {
 
         Bitmap workingBitmap = Bitmap.createBitmap(bm);
         Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
@@ -676,7 +1066,8 @@ if(!(imageView.getDrawable()==null)) {
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
+        paint.setTextSize(size);
 
 
         Rect textRect = new Rect();
@@ -692,49 +1083,7 @@ if(!(imageView.getDrawable()==null)) {
         int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
 
         //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
-        int yPos = (int) ((canvas.getHeight()/7) - ((paint.descent() + paint.ascent()) / 2)) ;
-
-        canvas.drawText(text, xPos, yPos, paint);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(3);
-        paint.setColor(Color.BLACK);
-        canvas.drawText(text, xPos, yPos, paint);
-
-        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
-        imageView.setImageBitmap(bitmap.getBitmap());
-
-        //return new BitmapDrawable(getResources(), mutableBitmap);
-    }
-    private void writeTextOnDrawableUpDown(Bitmap bm, String text) {
-
-        Bitmap workingBitmap = Bitmap.createBitmap(bm);
-        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-
-        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
-        paint.setTypeface(tf);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
-
-
-        Rect textRect = new Rect();
-        paint.getTextBounds(text, 0, text.length(), textRect);
-
-        Canvas canvas = new Canvas(mutableBitmap);
-
-        //If the text is bigger than the canvas , reduce the font size
-        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
-        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
-
-        //Calculate the positionsf
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
-
-        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
-        int yPos = (int) ((canvas.getHeight()/7) + convertToPixels(imageView.getContext(), 35) + 10 - ((paint.descent() + paint.ascent()) / 2)) ;
+        int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight()/6) - size - 10 - ((paint.descent() + paint.ascent()) / 2)) ;
 
         canvas.drawText(text, xPos, yPos, paint);
         paint.setStyle(Paint.Style.STROKE);
@@ -749,54 +1098,9 @@ if(!(imageView.getDrawable()==null)) {
     }
 
 
-    private void writeTextOnDrawableDownDown(Bitmap bm, String text) {
-
-        Bitmap workingBitmap = Bitmap.createBitmap(bm);
-        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
 
 
-        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
-        paint.setTypeface(tf);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(convertToPixels(imageView.getContext(), 35));
-
-
-        Rect textRect = new Rect();
-        paint.getTextBounds(text, 0, text.length(), textRect);
-
-        Canvas canvas = new Canvas(mutableBitmap);
-
-        //If the text is bigger than the canvas , reduce the font size
-        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
-        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
-
-        //Calculate the positionsf
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
-
-        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
-        int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight()/6) - convertToPixels(imageView.getContext(), 35) - 10 - ((paint.descent() + paint.ascent()) / 2)) ;
-
-        canvas.drawText(text, xPos, yPos, paint);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(3);
-        paint.setColor(Color.BLACK);
-        canvas.drawText(text, xPos, yPos, paint);
-
-        BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
-        imageView.setImageBitmap(bitmap.getBitmap());
-
-        //return new BitmapDrawable(getResources(), mutableBitmap);
-    }
-
-    public static int convertToPixels(Context context, int nDP)
-    {
-        final float conversionScale = context.getResources().getDisplayMetrics().density;
-
-        return (int) ((nDP * conversionScale) + 0.5f) ;
-
+    public void undo(){
+        imageView.setImageBitmap(prev);
     }
 }

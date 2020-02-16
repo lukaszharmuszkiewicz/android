@@ -88,4 +88,11 @@
         android:title="Memy"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/undo"
+        android:orderInCategory="100"
+        android:title="Cofnij"
+        app:showAsAction="never" />
+
+
 </menu>

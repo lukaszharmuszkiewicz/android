@@ -864,6 +864,22 @@ public class ImageFilters {
 
         return bitmapWithReflection;
     }
+
+
+    public static Bitmap toGrayscale(Bitmap srcImage) {
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(srcImage.getWidth(), srcImage.getHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(srcImage, 0, 0, paint);
+
+        return bmpGrayscale;
+    }
 }
 
 
