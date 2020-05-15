@@ -63,14 +63,6 @@
         android:title="@string/save"
         app:showAsAction="never" />
 
-
-<!--    <item-->
-<!--        android:id="@+id/zrobZdjecie"-->
-<!--        android:orderInCategory="100"-->
-<!--        android:title="zdjecie"-->
-<!--        app:showAsAction="never" />-->
-
-
     <item
         android:id="@+id/instagram"
         android:orderInCategory="100"

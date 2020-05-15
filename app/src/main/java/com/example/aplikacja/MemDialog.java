@@ -35,8 +35,6 @@ public class MemDialog extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-
-                        //  listener.applyTexts(level.getText().toString());
                         listener.addText(upup.getText().toString().toUpperCase(), updown.getText().toString().toUpperCase(),
                                 downup.getText().toString().toUpperCase(), downdown.getText().toString().toUpperCase());
                     }

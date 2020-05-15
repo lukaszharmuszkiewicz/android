@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Edytor zdjęć</string>
+    <string name="app_name">PainTool</string>
     <string name="action_settings">Settings</string>
     <string name="add_image">Dodaj zdjęcie</string>
     <string name="sepia">Sepia</string>
