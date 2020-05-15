@@ -406,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
             });
             v.setBackgroundColor(Color.WHITE);
             AlertDialog dialog = builder.create();
+            imageView.setAlpha(255);
             dialog.show();
 
             return true;
