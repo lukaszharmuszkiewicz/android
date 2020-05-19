@@ -94,15 +94,10 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
-
-
         v = findViewById(android.R.id.content).getRootView();
         v.setBackgroundColor(Color.WHITE);
-        //v.setBackgroundResource(R.drawable.tlo);
-        //getWindow().setBackgroundDrawableResource(R.mipmap.ic_launcher_foreground);
         imageView = findViewById(R.id.imageView);
         setBackground();
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         imageFilters = new ImageFilters();
@@ -160,8 +155,8 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
             if (imageExists) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Wybierz filtr");
-                String[] animals = {"sepia", "czarno-białe", "rozmycie Gaussa", "śnieg", "nasycenie", "rozjaśnienie", "grawer"};
-                builder.setItems(animals, new DialogInterface.OnClickListener() {
+                String[] options = {"sepia", "czarno-białe", "rozmycie Gaussa", "śnieg", "nasycenie", "rozjaśnienie", "grawer"};
+                builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
@@ -225,9 +220,9 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
                 prev = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Wybierz obrót");
-                String[] animals = {"90 stopni w prawo", "90 stopni w lewo"};
+                String[] options = {"90 stopni w prawo", "90 stopni w lewo"};
                 final Bitmap img = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-                builder.setItems(animals, new DialogInterface.OnClickListener() {
+                builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
@@ -264,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
                 prev = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Wybierz element");
-                String[] animals = {"Śnieg", "Ramka", "Zaokrąglone rogi"};
-                builder.setItems(animals, new DialogInterface.OnClickListener() {
+                String[] options = {"Śnieg", "Ramka", "Zaokrąglone rogi"};
+                builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
@@ -375,8 +370,8 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Dodaj zdjęcie");
-            String[] animals = {"Galeria", "Aparat"};
-            builder.setItems(animals, new DialogInterface.OnClickListener() {
+            String[] options = {"Galeria", "Aparat"};
+            builder.setItems(options, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
@@ -406,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
             });
             v.setBackgroundColor(Color.WHITE);
             AlertDialog dialog = builder.create();
+            imageExists = true;
             imageView.setAlpha(255);
             dialog.show();
 
@@ -624,8 +620,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
-        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
         paint.setTextSize(convertToPixels(mutableBitmap));
 
         Rect textRect = new Rect();
@@ -659,8 +653,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
-        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
         paint.setTextSize(convertToPixels(mutableBitmap));
 
 
@@ -679,8 +671,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
         BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
         imageView.setImageBitmap(bitmap.getBitmap());
-
-        //return new BitmapDrawable(getResources(), mutableBitmap);
     }
 
 
@@ -697,7 +687,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
         paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
 
 
@@ -705,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.getTextBounds(text, 0, text.length(), textRect);
 
         Canvas canvas = new Canvas(mutableBitmap);
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
+        int xPos = (canvas.getWidth() / 2) - 2;
         int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight() / 6) - convertToPixels(mutableBitmap) - 10 - ((paint.descent() + paint.ascent()) / 2));
 
         canvas.drawText(text, xPos, yPos, paint);
@@ -760,7 +749,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
         imageView.setImageBitmap(bitmap.getBitmap());
 
-        //return new BitmapDrawable(getResources(), mutableBitmap);
     }
 
     private void editTextOnDrawableUpDown(Bitmap bm, String text, int size) {
@@ -776,8 +764,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
-        //paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.myFontSize));
         paint.setTextSize(size);
 
 
@@ -786,14 +772,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
         Canvas canvas = new Canvas(mutableBitmap);
 
-        //If the text is bigger than the canvas , reduce the font size
-        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
-        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
-
-        //Calculate the positionsf
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
-
-        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
+        int xPos = (canvas.getWidth() / 2) - 2;
         int yPos = (int) ((canvas.getHeight() / 7) + size + 10 - ((paint.descent() + paint.ascent()) / 2));
 
         canvas.drawText(text, xPos, yPos, paint);
@@ -804,8 +783,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
         BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
         imageView.setImageBitmap(bitmap.getBitmap());
-
-        //return new BitmapDrawable(getResources(), mutableBitmap);
     }
 
 
@@ -822,7 +799,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
         paint.setTextSize(size);
 
 
@@ -831,14 +807,8 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
         Canvas canvas = new Canvas(mutableBitmap);
 
-        //If the text is bigger than the canvas , reduce the font size
-        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
-        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+        int xPos = (canvas.getWidth() / 2) - 2;
 
-        //Calculate the positionsf
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
-
-        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
         int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight() / 6) - ((paint.descent() + paint.ascent()) / 2));
 
         canvas.drawText(text, xPos, yPos, paint);
@@ -866,7 +836,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(convertToPixels(imageView.getContext(), 35));
         paint.setTextSize(size);
 
 
@@ -875,14 +844,8 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
 
         Canvas canvas = new Canvas(mutableBitmap);
 
-        //If the text is bigger than the canvas , reduce the font size
-        // if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
-        //paint.setTextSize(convertToPixels(mContext, 7));        //Scaling needs to be used for different dpi's
+        int xPos = (canvas.getWidth() / 2) - 2;
 
-        //Calculate the positionsf
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
-
-        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
         int yPos = (int) ((canvas.getHeight()) - (canvas.getHeight() / 6) - size - 10 - ((paint.descent() + paint.ascent()) / 2));
 
         canvas.drawText(text, xPos, yPos, paint);
@@ -894,7 +857,6 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
         BitmapDrawable bitmap = new BitmapDrawable(getResources(), mutableBitmap);
         imageView.setImageBitmap(bitmap.getBitmap());
 
-        //return new BitmapDrawable(getResources(), mutableBitmap);
     }
 
 

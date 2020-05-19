@@ -34,8 +34,7 @@ public class RogiDialog extends AppCompatDialogFragment {
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String password = level.getText().toString();
-                      //  listener.applyTexts(level.getText().toString());
+
                         listener.rogi(level.getText().toString());
                     }
                 });
@@ -52,8 +51,7 @@ public class RogiDialog extends AppCompatDialogFragment {
         try {
             listener = (RogiDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    "must implement ExampleDialogListener");
+            throw new ClassCastException();
         }
     }
 

@@ -52,8 +52,7 @@ public class ErozjaDialog extends AppCompatDialogFragment {
         try {
             listener = (ErozjaDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    "must implement ExampleDialogListener");
+            throw new ClassCastException();
         }
     }
 

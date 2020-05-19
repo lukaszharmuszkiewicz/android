@@ -35,7 +35,6 @@ public class ExampleDialog extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String password = level.getText().toString();
-                      //  listener.applyTexts(level.getText().toString());
                         listener.saturation(level.getText().toString());
                     }
                 });
@@ -52,8 +51,7 @@ public class ExampleDialog extends AppCompatDialogFragment {
         try {
             listener = (ExampleDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    "must implement ExampleDialogListener");
+            throw new ClassCastException();
         }
     }
 

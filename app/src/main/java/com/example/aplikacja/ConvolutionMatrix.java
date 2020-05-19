@@ -43,20 +43,14 @@ public class ConvolutionMatrix
         for(int y = 0; y < height - 2; ++y) {
             for(int x = 0; x < width - 2; ++x) {
 
-                // get pixel matrix
                 for(int i = 0; i < SIZE; ++i) {
                     for(int j = 0; j < SIZE; ++j) {
                         pixels[i][j] = src.getPixel(x + i, y + j);
                     }
                 }
 
-                // get alpha of center pixel
                 A = Color.alpha(pixels[1][1]);
-
-                // init color sum
                 sumR = sumG = sumB = 0;
-
-                // get sum of RGB on matrix
                 for(int i = 0; i < SIZE; ++i) {
                     for(int j = 0; j < SIZE; ++j) {
                         sumR += (Color.red(pixels[i][j]) * matrix.Matrix[i][j]);
@@ -64,28 +58,22 @@ public class ConvolutionMatrix
                         sumB += (Color.blue(pixels[i][j]) * matrix.Matrix[i][j]);
                     }
                 }
-
-                // get final Red
                 R = (int)(sumR / matrix.Factor + matrix.Offset);
                 if(R < 0) { R = 0; }
                 else if(R > 255) { R = 255; }
 
-                // get final Green
                 G = (int)(sumG / matrix.Factor + matrix.Offset);
                 if(G < 0) { G = 0; }
                 else if(G > 255) { G = 255; }
 
-                // get final Blue
                 B = (int)(sumB / matrix.Factor + matrix.Offset);
                 if(B < 0) { B = 0; }
                 else if(B > 255) { B = 255; }
 
-                // apply new pixel
                 result.setPixel(x + 1, y + 1, Color.argb(A, R, G, B));
             }
         }
 
-        // final image
         return result;
     }
 }

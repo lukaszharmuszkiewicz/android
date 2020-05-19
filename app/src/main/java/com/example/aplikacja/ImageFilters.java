@@ -1,19 +1,15 @@
 package com.example.aplikacja;
 
 import android.graphics.Bitmap;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.LinearGradient;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Shader;
 
 import java.util.Random;
 
@@ -96,17 +92,13 @@ public class ImageFilters {
 
 
     public  Bitmap applyBrightnessEffect(Bitmap src, int value) {
-        // image size
         int width = src.getWidth();
         int height = src.getHeight();
-        // create output bitmap
         Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
-        // color information
         int A, R, G, B;
         int pixel;
         for(int x = 0; x < width; ++x) {
             for(int y = 0; y < height; ++y) {
-                // get pixel color
                 pixel = src.getPixel(x, y);
                 A = Color.alpha(pixel);
                 R = Color.red(pixel);
@@ -164,33 +156,19 @@ public class ImageFilters {
 
 
     public Bitmap applyRoundCornerEffect(Bitmap src, float round) {
-        // image size
         int width = src.getWidth();
         int height = src.getHeight();
-        // create bitmap output
         Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        // set canvas for painting
         Canvas canvas = new Canvas(result);
         canvas.drawARGB(0, 0, 0, 0);
-
-        // config paint
         final Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(Color.BLACK);
-
-        // config rectangle for embedding
         final Rect rect = new Rect(0, 0, width, height);
         final RectF rectF = new RectF(rect);
-
-        // draw rect to canvas
         canvas.drawRoundRect(rectF, round, round, paint);
-
-        // create Xfer mode
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        // draw source image to canvas
         canvas.drawBitmap(src, rect, rect, paint);
-
-        // return final image
         return result;
     }
 
@@ -207,33 +185,25 @@ public class ImageFilters {
 
 
     public  Bitmap applySnowEffect(Bitmap source) {
-        // get image size
         int width = source.getWidth();
         int height = source.getHeight();
         int[] pixels = new int[width * height];
-        // get pixel array from source
         source.getPixels(pixels, 0, width, 0, 0, width, height);
-        // random object
         Random random = new Random();
 
         int R, G, B, index = 0, thresHold = 50;
-        // iteration through pixels
         for(int y = 0; y < height; ++y) {
             for(int x = 0; x < width; ++x) {
-                // get current index in 2D-matrix
                 index = y * width + x;
-                // get color
                 R = Color.red(pixels[index]);
                 G = Color.green(pixels[index]);
                 B = Color.blue(pixels[index]);
-                // generate threshold
                 thresHold = random.nextInt(COLOR_MAX);
                 if(R > thresHold && G > thresHold && B > thresHold) {
                     pixels[index] = Color.rgb(COLOR_MAX, COLOR_MAX, COLOR_MAX);
                 }
             }
         }
-        // output bitmap
         Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
         return bmOut;
@@ -242,28 +212,22 @@ public class ImageFilters {
 
 
     public  Bitmap applySaturationFilter(Bitmap source, int level) {
-        // get image size
         int width = source.getWidth();
         int height = source.getHeight();
         int[] pixels = new int[width * height];
         float[] HSV = new float[3];
-        // get pixel array from source
         source.getPixels(pixels, 0, width, 0, 0, width, height);
 
         int index = 0;
-        // iteration through pixels
         for(int y = 0; y < height; ++y) {
             for(int x = 0; x < width; ++x) {
-                // get current index in 2D-matrix
                 index = y * width + x;
                 Color.colorToHSV(pixels[index], HSV);
                 HSV[1] *= level;
                 HSV[1] = (float) Math.max(0.0, Math.min(HSV[1], 1.0));
-                // take color back
                 pixels[index] |= Color.HSVToColor(HSV);
             }
         }
-        // output bitmap
         Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
         return bmOut;
@@ -276,10 +240,8 @@ public class ImageFilters {
     public static Bitmap toGrayScale(Bitmap srcImage) {
 
         Bitmap bmpGrayscale = Bitmap.createBitmap(srcImage.getWidth(), srcImage.getHeight(), Bitmap.Config.ARGB_8888);
-
         Canvas canvas = new Canvas(bmpGrayscale);
         Paint paint = new Paint();
-
         ColorMatrix cm = new ColorMatrix();
         cm.setSaturation(0);
         paint.setColorFilter(new ColorMatrixColorFilter(cm));

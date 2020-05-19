@@ -34,8 +34,6 @@ public class RamkaDialog extends AppCompatDialogFragment {
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String password = level.getText().toString();
-                      //  listener.applyTexts(level.getText().toString());
                         listener.ramka(level.getText().toString());
                     }
                 });
@@ -52,8 +50,7 @@ public class RamkaDialog extends AppCompatDialogFragment {
         try {
             listener = (RamkaDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    "must implement ExampleDialogListener");
+            throw new ClassCastException();
         }
     }
 
